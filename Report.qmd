@@ -1,0 +1,89 @@
+---
+title: "Do Pasto ao Prato Exercise"
+author: "Willian Vieira"
+date: today
+format:
+  html:
+    theme: cosmo
+    toc: true
+---
+
+```{r setup, include=FALSE}
+# Cache chunks
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+# Task 1: Distribution of meat suppliers by state
+
+## Query data
+
+```{r import packages}
+library(httr)
+library(glue)
+library(tibble)
+library(purrr)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
+```
+
+
+```{r parameters}
+api_endpoint = 'http://compras.dados.gov.br/fornecedores/v1/fornecedores.'
+format_type = 'csv' # available types: `html`, `xml`, `json`, or `csv`
+col_id = 'id_cnae'
+# Classes of economic activity
+CNAE_ids <- c('1011201', '1011205', '1013901', '1013902')
+```
+
+Now let's query the suppliers of meat to each CNAE activitiy classes.
+
+```{r query suppliers,message=FALSE}
+# Query data
+suppliers_ls = map(
+  CNAE_ids,
+  ~ GET(glue('{api_endpoint}{format_type}?{col_id}={.x}'))
+)
+
+# Check if all queries were correct (200 code)
+query_status <- map(suppliers_ls, ~ status_code(.)) |>
+  flatten_int()
+
+# keep only the ones that did not fail
+suppliers_ls <- suppliers_ls[query_status == 200]
+
+# Extract query content and convert to a single data.frame
+suppliers_dt = map(
+    suppliers_ls,
+    ~ content(.x)
+  ) |>
+  bind_rows()
+```
+
+
+## Number of suppliers by state
+
+```{r, compute nbSuppliers}
+# compute number of suppliers by state
+nbSuppliers_state <- suppliers_dt |>
+  group_by(UF) |>
+  summarise(
+    nbSuppliers = length(unique(CNPJ))
+  )
+```
+
+```{r, barPlot,message=FALSE,fig.width=7,fig.height=6}
+#| fig-cap: "Test his fig cap."
+nbSuppliers_state |>
+  left_join(
+    read.csv(file.path('data', 'states.csv'))
+  ) |>
+  ggplot(aes(y = reorder(StateName, nbSuppliers), x = nbSuppliers)) +
+    geom_col() +
+    theme_classic() +
+    ylab('') + xlab('') +
+    labs(subtitle = 'Number of suppliers by state')    
+```
+
+
