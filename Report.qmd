@@ -16,13 +16,20 @@ format:
 knitr::opts_chunk$set(cache = TRUE)
 ```
 
-# Task 1: Distribution of meat suppliers by state
+This document is a dynamic report generated with R and Quarto. The source code for this report is hosted on [GitHub](https://github.com/willvieira/doPastoAoPrato_exercise) and can be generated in the `Code` hyperlink at the top right of this page.
+
+
+::: {.panel-tabset}
+
+## Part 1: Technical skills
+
+# Distribution of meat suppliers by state
 
 In this section, I will use the API [Compras Governamentais](https://compras.dados.gov.br/docs/home.html) to extract all meat purchases made by the Brazilian government.
 This dataset will be used to count the number of meatpackers in each state which are suppliers of the government.
 The API documentation for the governement suppliers is detailed [here](https://compras.dados.gov.br/docs/fornecedores/v1/fornecedores.html).
 
-## Setup
+### Setup
 
 I start the script by importing the external libraries and defining the necessary parameters to import the dataset.
 
@@ -48,7 +55,7 @@ col_id = 'id_cnae'
 CNAE_ids <- c('1011201', '1011205', '1013901', '1013902')
 ```
 
-## Data query
+### Data query
 
 Once the API address and variables are defined, I use the `httr::GET()` function to query the API response and the `httr:content()` function to extract its content.
 The `purrr::map()` is used to vectorize the call over the `CNAE_ids` classes.
@@ -77,7 +84,7 @@ suppliers_dt = map(
 ```
 
 
-## Number of suppliers by state
+### Number of suppliers by state
 
 The resulting query extracted a total of `r length(unique(suppliers_dt$CNPJ))` suppliers from `r length(unique(suppliers_dt$UF))` different states. Of the total number of suppliers, `r sum(suppliers_dt$Ativo == 'Não')` are inactive. I will use only active suppliers to count their distribution among the states. The CNPJ is used as a primary key to identify the supplier.
 
@@ -95,6 +102,7 @@ nbSuppliers_state <- suppliers_dt |>
 
 Two figures are used to visualize the distribution of suppliers in Brazil.
 The barplot is used to compare the total number of suppliers among the states, and the map is useful to visualize their spatial distribution among the regions.
+Note that both figures require the files stored in the `data` folder.
 
 ::: {#figBarMap}
 
@@ -107,7 +115,11 @@ nbSuppliers_state |>
   left_join(
     read.csv(file.path('data', 'states.csv'))
   ) |>
-  ggplot(aes(y = reorder(StateName, nbSuppliers), x = nbSuppliers, fill = nbSuppliers)) +
+  ggplot(aes(
+      y = reorder(StateName, nbSuppliers),
+      x = nbSuppliers,
+      fill = nbSuppliers
+    )) +
     geom_col() +
     scale_fill_viridis_c() +
     theme_classic() +
@@ -144,6 +156,15 @@ readRDS(file.path('data', 'statesPolygon.RDS')) |>
     )
 ```
 
-Distribution of meat suppliers by Brazilian states.
+Figure 1. Distribution of meat suppliers by Brazilian states.
+
+:::
+
+## Part 2: Reflective exercise
+
+### Question 1
+
+
+### Question 2
 
 :::
