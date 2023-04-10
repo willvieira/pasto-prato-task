@@ -17,7 +17,7 @@ knitr::opts_chunk$set(cache = TRUE)
 
 ## Query data
 
-```{r import packages}
+```{r import packages,message=FALSE}
 library(httr)
 library(glue)
 library(tibble)
@@ -25,6 +25,7 @@ library(purrr)
 library(dplyr)
 library(tidyr)
 library(stringr)
+library(sf)
 library(ggplot2)
 ```
 
@@ -73,17 +74,47 @@ nbSuppliers_state <- suppliers_dt |>
   )
 ```
 
-```{r, barPlot,message=FALSE,fig.width=7,fig.height=6}
-#| fig-cap: "Test his fig cap."
+::: {#figBarMap}
+
+```{r, barPlot,message=FALSE,fig.width=12,fig.height=13}
+#| layout-ncol: 2
+
 nbSuppliers_state |>
   left_join(
     read.csv(file.path('data', 'states.csv'))
   ) |>
-  ggplot(aes(y = reorder(StateName, nbSuppliers), x = nbSuppliers)) +
+  ggplot(aes(y = reorder(StateName, nbSuppliers), x = nbSuppliers, fill = nbSuppliers)) +
     geom_col() +
+    scale_fill_viridis_c() +
     theme_classic() +
     ylab('') + xlab('') +
-    labs(subtitle = 'Number of suppliers by state')    
+    labs(title = 'Number of suppliers by state') +
+    theme(
+      legend.position = 'none',
+      text = element_text(size = 36)
+    )
+
+readRDS(file.path('data', 'statesPolygon.RDS')) |>
+  left_join(
+    nbSuppliers_state,
+    by = c('abbrev_state' = 'UF')
+  ) |>
+  ggplot() +
+    geom_sf(aes(fill = nbSuppliers)) +
+    scale_fill_viridis_b() +
+    theme_classic() +
+    theme(
+      axis.line=element_blank(),
+      axis.title=element_blank(),
+      axis.text=element_blank(),
+      axis.ticks=element_blank(),
+      legend.title=element_blank(),
+      legend.position = 'bottom',
+      text = element_text(size = 26),
+      legend.key.size = unit(1, 'cm')
+    )
 ```
 
+Distribution of meat suppliers by Brazilian states.
 
+:::
