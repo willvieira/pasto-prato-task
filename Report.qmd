@@ -4,8 +4,11 @@ author: "Willian Vieira"
 date: today
 format:
   html:
-    theme: cosmo
+    theme: flatly
     toc: true
+    code-fold: show
+    code-tools: true
+    source: repo
 ---
 
 ```{r setup, include=FALSE}
@@ -15,7 +18,13 @@ knitr::opts_chunk$set(cache = TRUE)
 
 # Task 1: Distribution of meat suppliers by state
 
-## Query data
+In this section, I will use the API [Compras Governamentais](https://compras.dados.gov.br/docs/home.html) to extract all meat purchases made by the Brazilian government.
+This dataset will be used to count the number of meatpackers in each state which are suppliers of the government.
+The API documentation for the governement suppliers is detailed [here](https://compras.dados.gov.br/docs/fornecedores/v1/fornecedores.html).
+
+## Setup
+
+I start the script by importing the external libraries and defining the necessary parameters to import the dataset.
 
 ```{r import packages,message=FALSE}
 library(httr)
@@ -29,16 +38,21 @@ library(sf)
 library(ggplot2)
 ```
 
-
 ```{r parameters}
 api_endpoint = 'http://compras.dados.gov.br/fornecedores/v1/fornecedores.'
-format_type = 'csv' # available types: `html`, `xml`, `json`, or `csv`
+# available types: `html`, `xml`, `json`, or `csv`
+format_type = 'csv'
+# parameters to be used to call API
 col_id = 'id_cnae'
-# Classes of economic activity
+# Specific classes of economic activity to extract
 CNAE_ids <- c('1011201', '1011205', '1013901', '1013902')
 ```
 
-Now let's query the suppliers of meat to each CNAE activitiy classes.
+## Data query
+
+Once the API address and variables are defined, I use the `httr::GET()` function to query the API response and the `httr:content()` function to extract its content.
+The `purrr::map()` is used to vectorize the call over the `CNAE_ids` classes.
+Before extracting the contents, I check that the call status has succeeded (status code `200`). For this exercise, I simply chose to remove the failed queries, but a better approach would be to retry the call for $n$ times or until it returns the correct status.
 
 ```{r query suppliers,message=FALSE}
 # Query data
@@ -65,21 +79,31 @@ suppliers_dt = map(
 
 ## Number of suppliers by state
 
+The resulting query extracted a total of `r length(unique(suppliers_dt$CNPJ))` suppliers from `r length(unique(suppliers_dt$UF))` different states. Of the total number of suppliers, `r sum(suppliers_dt$Ativo == 'Não')` are inactive. I will use only active suppliers to count their distribution among the states. The CNPJ is used as a primary key to identify the supplier.
+
 ```{r, compute nbSuppliers}
 # compute number of suppliers by state
 nbSuppliers_state <- suppliers_dt |>
+  # remove innactive suppliers
+  filter(Ativo == 'Sim') |>
   group_by(UF) |>
+  # count number of suppliers by state UF
   summarise(
     nbSuppliers = length(unique(CNPJ))
   )
 ```
+
+Two figures are used to visualize the distribution of suppliers in Brazil.
+The barplot is used to compare the total number of suppliers among the states, and the map is useful to visualize their spatial distribution among the regions.
 
 ::: {#figBarMap}
 
 ```{r, barPlot,message=FALSE,fig.width=12,fig.height=13}
 #| layout-ncol: 2
 
+# Figure barplot
 nbSuppliers_state |>
+  # add full name of states to be used in ylab
   left_join(
     read.csv(file.path('data', 'states.csv'))
   ) |>
@@ -91,14 +115,19 @@ nbSuppliers_state |>
     labs(title = 'Number of suppliers by state') +
     theme(
       legend.position = 'none',
+      # large text size because of Quarto resolution
       text = element_text(size = 36)
     )
 
+# Figure map
 readRDS(file.path('data', 'statesPolygon.RDS')) |>
+  # add nb of suppliers to the attribute table
   left_join(
     nbSuppliers_state,
     by = c('abbrev_state' = 'UF')
   ) |>
+  # For states that didn't have any suppliers, fill with zero
+  mutate(nbSuppliers = replace_na(nbSuppliers, 0)) |>
   ggplot() +
     geom_sf(aes(fill = nbSuppliers)) +
     scale_fill_viridis_b() +
