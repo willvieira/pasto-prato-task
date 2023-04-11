@@ -116,17 +116,20 @@ nbSuppliers_state |>
     read.csv(file.path('data', 'states.csv'))
   ) |>
   ggplot(aes(
+      # sort states by number of suppliers
       y = reorder(StateName, nbSuppliers),
       x = nbSuppliers,
+      # color states by number of suppliers
       fill = nbSuppliers
     )) +
     geom_col() +
     scale_fill_viridis_c() +
     theme_classic() +
     ylab('') + xlab('') +
-    labs(title = 'Number of suppliers by state') +
+    labs(title = 'Number of active suppliers by state') +
     theme(
       legend.position = 'none',
+      plot.title = element_text(hjust = 50, margin = margin(0, 0, 55, 0)),
       # large text size because of Quarto resolution
       text = element_text(size = 36)
     )
@@ -142,7 +145,7 @@ readRDS(file.path('data', 'statesPolygon.RDS')) |>
   mutate(nbSuppliers = replace_na(nbSuppliers, 0)) |>
   ggplot() +
     geom_sf(aes(fill = nbSuppliers)) +
-    scale_fill_viridis_b() +
+    scale_fill_viridis_c() +
     theme_classic() +
     theme(
       axis.line=element_blank(),
@@ -156,7 +159,7 @@ readRDS(file.path('data', 'statesPolygon.RDS')) |>
     )
 ```
 
-Figure 1. Distribution of meat suppliers by Brazilian states.
+Figure 1. Distribution of active meat suppliers by Brazilian states. The continuous color gradient represents the number of suppliers ranging from 0 (dark blue) to `r max(nbSuppliers_state$nbSuppliers)` (yellow).
 
 :::
 
