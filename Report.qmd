@@ -16,7 +16,8 @@ format:
 knitr::opts_chunk$set(cache = TRUE)
 ```
 
-This document is a dynamic report generated with R and Quarto. The source code for this report is hosted on [GitHub](https://github.com/willvieira/doPastoAoPrato_exercise) and can be generated in the `Code` hyperlink at the top right of this page.
+This report is part of my application to the Researcher/Data Scientist position at UCLouvain.
+This document is a dynamic report generated with R and Quarto. The source code for this report is hosted on [GitHub](https://github.com/willvieira/pasto-prato-task) and can be generated in the `Code` hyperlink at the top right of this page.
 
 
 ::: {.panel-tabset}
