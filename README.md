@@ -1,5 +1,7 @@
 # Do Pasto ao Prato Exercise
 
+[![Build report](https://github.com/willvieira/pasto-prato-task/actions/workflows/build.yml/badge.svg)](https://github.com/willvieira/pasto-prato-task/actions/workflows/build.yml)
+
 Task for the Researcher/Data Scientist position at UCLouvain.
 
 ## Installation
