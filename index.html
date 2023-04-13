@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Willian Vieira">
-<meta name="dcterms.date" content="2023-04-12">
+<meta name="dcterms.date" content="2023-04-13">
 
 <title>Do Pasto ao Prato Exercise</title>
 <style>
@@ -130,7 +130,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 12, 2023</p>
+      <p class="date">April 13, 2023</p>
     </div>
   </div>
   
@@ -147,7 +147,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <section id="distribution-of-meat-suppliers-by-state" class="level1">
 <h1>Distribution of meat suppliers by state</h1>
-<p>In this section, I will use the API <a href="https://compras.dados.gov.br/docs/home.html">Compras Governamentais</a> to extract all meat purchases made by the Brazilian government. This dataset will be used to count the number of meatpackers in each state which are suppliers of the government. The API documentation for the governement suppliers is detailed <a href="https://compras.dados.gov.br/docs/fornecedores/v1/fornecedores.html">here</a>.</p>
+<p>In this section, I will use the API <a href="https://compras.dados.gov.br/docs/home.html">Compras Governamentais</a> to extract all meat purchases made by the Brazilian government. This dataset will be used to count the number of meatpackers in each state which are suppliers of the government. The API documentation for the government suppliers is detailed <a href="https://compras.dados.gov.br/docs/fornecedores/v1/fornecedores.html">here</a>.</p>
 <section id="setup" class="level3">
 <h3 class="anchored" data-anchor-id="setup">Setup</h3>
 <p>I start the script by importing the external libraries and defining the necessary parameters to import the dataset.</p>
@@ -181,7 +181,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="data-query" class="level3">
 <h3 class="anchored" data-anchor-id="data-query">Data query</h3>
-<p>Once the API address and variables are defined, I use the <code>httr::GET()</code> function to query the API response and the <code>httr:content()</code> function to extract its content. The <code>purrr::map()</code> is used to vectorize the call over the <code>CNAE_ids</code> classes. Before extracting the contents, I check that the call status has succeeded (status code <code>200</code>). For this exercise, I simply chose to remove the failed queries, but a better approach would be to retry the call for <span class="math inline">\(n\)</span> times or until it returns the correct status.</p>
+<p>Once the API address and variables are defined, I use the <code>httr::GET()</code> function to query the API response and the <code>httr:content()</code> function to extract its content. The <code>purrr::map()</code> function vectorizes the call over the <code>CNAE_ids</code> classes. Before extracting the contents, I check that the call status has succeeded (status code <code>200</code>). For this exercise, I simply chose to remove the failed queries, but a better approach would be to retry the call for <span class="math inline">\(n\)</span> times or until it returns the correct status.</p>
 <div class="cell" data-hash="Report_cache/html/query suppliers_d860fba9272fb6f7f0a95f6ef479b80f">
 <details open="">
 <summary>Code</summary>
@@ -224,7 +224,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Two figures are used to visualize the distribution of suppliers in Brazil. The barplot is used to compare the total number of suppliers among the states, and the map is useful to visualize their spatial distribution among the regions. Note that both figures require the files stored in the <code>data</code> folder.</p>
+<p>Two figures are used to visualize the distribution of suppliers in Brazil. The barplot is used to compare the total number of suppliers among the states, and the map is helpful to visualize their spatial distribution among the regions. Note that both figures require the files stored in the <code>data</code> folder.</p>
 <div id="figBarMap">
 <div>
 <details open="">
@@ -296,9 +296,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <section id="question-1" class="level3">
 <h3 class="anchored" data-anchor-id="question-1">Question 1</h3>
+<p>Here I propose an integrated pipeline linking the data source to the final data product in order to determine whether there are any instances of forced labour among a slaughterhouse’s suppliers. The first step involves creating a relational database to store all records of animal movements from the GTA documents. A relational database is a type of database that stores and organizes data in the format of tables with predefined links between them. This database would have tables dedicated to storing the transportation occurrences between farms and slaughterhouses, as well as additional tables describing each farm and slaughterhouse and any cases of forced labor. This approach allows one to link all direct and indirect connections of forced labor to a slaughterhouse. In the second step, an API would be added to the database to facilitate data insertion and extraction. Independent microservices, such as self-contained scripts, would be deployed to source new information, update the Lista Suja, and query data to determine if any slaughterhouses are linked to forced labor. Each of these microservices - responsible for processing the data, updating the debase, analyzing and summarizing the data - would be automatically deployed at suitable intervals, allowing the pipeline to scale for continuous use. This approach ensures consistent data quality assessment and automated data source updates, while also allowing the database to be used for multiple purposes without compromising the workflow’s efficiency.</p>
 </section>
 <section id="question-2" class="level3">
 <h3 class="anchored" data-anchor-id="question-2">Question 2</h3>
+<p>The majority of cattle indicators can also be used to evaluate the impact of the chicken industry. Here, I propose a few extra indicators in addition to the ones already in place. To evaluate environmental impacts, regional water quality and soil contamination could be used as indicators of proper waste management. Additionally, the effect of agricultural practices on the local region, where large amounts of monoculture lands are used to produce feed for the livestock, could be measured using regional biodiversity indices, in addition to existing indicators such as deforestation. Chicken farmers often operate within an integrated agro-industrial framework, with the agro-industry supplying the feedstock and the farmers providing the labor. While this system has fostered considerable technological advancements, it has also created a dependency on agro-industries that diminishes the farmers’ bargaining leverage and exposes them to lobbying. Therefore, considering the social impact of agro-industries in the region, in conjunction with existing indicators such as forced labor, can facilitate a more thorough evaluation of the chicken production chain. Lastly, the Carcass condemnation data that is publicly accessible through Serviço de Inspeção Federal (SIF) can be used to evaluate animal welfare and sanitary conditions.</p>
 </section>
 </div>
 </div>
@@ -522,7 +524,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>In this section, I will use the API <span class="co">[</span><span class="ot">Compras Governamentais</span><span class="co">](https://compras.dados.gov.br/docs/home.html)</span> to extract all meat purchases made by the Brazilian government.</span>
 <span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>This dataset will be used to count the number of meatpackers in each state which are suppliers of the government.</span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>The API documentation for the governement suppliers is detailed <span class="co">[</span><span class="ot">here</span><span class="co">](https://compras.dados.gov.br/docs/fornecedores/v1/fornecedores.html)</span>.</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>The API documentation for the government suppliers is detailed <span class="co">[</span><span class="ot">here</span><span class="co">](https://compras.dados.gov.br/docs/fornecedores/v1/fornecedores.html)</span>.</span>
 <span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="fu">### Setup</span></span>
 <span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
@@ -554,7 +556,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a><span class="fu">### Data query</span></span>
 <span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>Once the API address and variables are defined, I use the <span class="in">`httr::GET()`</span> function to query the API response and the <span class="in">`httr:content()`</span> function to extract its content.</span>
-<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>The <span class="in">`purrr::map()`</span> is used to vectorize the call over the <span class="in">`CNAE_ids`</span> classes.</span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>The <span class="in">`purrr::map()`</span> function vectorizes the call over the <span class="in">`CNAE_ids`</span> classes.</span>
 <span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>Before extracting the contents, I check that the call status has succeeded (status code <span class="in">`200`</span>). For this exercise, I simply chose to remove the failed queries, but a better approach would be to retry the call for $n$ times or until it returns the correct status.</span>
 <span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a><span class="in">```{r query suppliers,message=FALSE}</span></span>
@@ -597,7 +599,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a>Two figures are used to visualize the distribution of suppliers in Brazil.</span>
-<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>The barplot is used to compare the total number of suppliers among the states, and the map is useful to visualize their spatial distribution among the regions.</span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>The barplot is used to compare the total number of suppliers among the states, and the map is helpful to visualize their spatial distribution among the regions.</span>
 <span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a>Note that both figures require the files stored in the <span class="in">`data`</span> folder.</span>
 <span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a>::: {#figBarMap}</span>
@@ -663,10 +665,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 1</span></span>
 <span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 2</span></span>
-<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a>Here I propose an integrated pipeline linking the data source to the final data product in order to determine whether there are any instances of forced labour among a slaughterhouse's suppliers.</span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a>The first step involves creating a relational database to store all records of animal movements from the GTA documents.</span>
+<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a>A relational database is a type of database that stores and organizes data in the format of tables with predefined links between them.</span>
+<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a>This database would have tables dedicated to storing the transportation occurrences between farms and slaughterhouses, as well as additional tables describing each farm and slaughterhouse and any cases of forced labor.</span>
+<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a>This approach allows one to link all direct and indirect connections of forced labor to a slaughterhouse.</span>
+<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a>In the second step, an API would be added to the database to facilitate data insertion and extraction.</span>
+<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a>Independent microservices, such as self-contained scripts, would be deployed to source new information, update the Lista Suja, and query data to determine if any slaughterhouses are linked to forced labor.</span>
+<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a>Each of these microservices - responsible for processing the data, updating the debase, analyzing and summarizing the data - would be automatically deployed at suitable intervals, allowing the pipeline to scale for continuous use.</span>
+<span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a>This approach ensures consistent data quality assessment and automated data source updates, while also allowing the database to be used for multiple purposes without compromising the workflow's efficiency.</span>
+<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a><span class="fu">### Question 2</span></span>
+<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a>The majority of cattle indicators can also be used to evaluate the impact of the chicken industry.</span>
+<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a>Here, I propose a few extra indicators in addition to the ones already in place.</span>
+<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a>To evaluate environmental impacts, regional water quality and soil contamination could be used as indicators of proper waste management.</span>
+<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a>Additionally, the effect of agricultural practices on the local region, where large amounts of monoculture lands are used to produce feed for the livestock, could be measured using regional biodiversity indices, in addition to existing indicators such as deforestation.</span>
+<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a>Chicken farmers often operate within an integrated agro-industrial framework, with the agro-industry supplying the feedstock and the farmers providing the labor.</span>
+<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a>While this system has fostered considerable technological advancements, it has also created a dependency on agro-industries that diminishes the farmers' bargaining leverage and exposes them to lobbying.</span>
+<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a>Therefore, considering the social impact of agro-industries in the region, in conjunction with existing indicators such as forced labor, can facilitate a more thorough evaluation of the chicken production chain.</span>
+<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a>Lastly, the Carcass condemnation data that is publicly accessible through Serviço de Inspeção Federal (SIF) can be used to evaluate animal welfare and sanitary conditions.</span>
+<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
