@@ -28,7 +28,7 @@ This document is a dynamic report generated with R and Quarto. The source code f
 
 In this section, I will use the API [Compras Governamentais](https://compras.dados.gov.br/docs/home.html) to extract all meat purchases made by the Brazilian government.
 This dataset will be used to count the number of meatpackers in each state which are suppliers of the government.
-The API documentation for the governement suppliers is detailed [here](https://compras.dados.gov.br/docs/fornecedores/v1/fornecedores.html).
+The API documentation for the government suppliers is detailed [here](https://compras.dados.gov.br/docs/fornecedores/v1/fornecedores.html).
 
 ### Setup
 
@@ -60,7 +60,7 @@ CNAE_ids <- c('1011201', '1011205', '1013901', '1013902')
 ### Data query
 
 Once the API address and variables are defined, I use the `httr::GET()` function to query the API response and the `httr:content()` function to extract its content.
-The `purrr::map()` is used to vectorize the call over the `CNAE_ids` classes.
+The `purrr::map()` function vectorizes the call over the `CNAE_ids` classes.
 Before extracting the contents, I check that the call status has succeeded (status code `200`). For this exercise, I simply chose to remove the failed queries, but a better approach would be to retry the call for $n$ times or until it returns the correct status.
 
 ```{r query suppliers,message=FALSE}
@@ -103,7 +103,7 @@ nbSuppliers_state <- suppliers_dt |>
 ```
 
 Two figures are used to visualize the distribution of suppliers in Brazil.
-The barplot is used to compare the total number of suppliers among the states, and the map is useful to visualize their spatial distribution among the regions.
+The barplot is used to compare the total number of suppliers among the states, and the map is helpful to visualize their spatial distribution among the regions.
 Note that both figures require the files stored in the `data` folder.
 
 ::: {#figBarMap}
@@ -169,7 +169,25 @@ Figure 1. Distribution of active meat suppliers by Brazilian states. The continu
 
 ### Question 1
 
+Here I propose an integrated pipeline linking the data source to the final data product in order to determine whether there are any instances of forced labour among a slaughterhouse's suppliers.
+The first step involves creating a relational database to store all records of animal movements from the GTA documents.
+A relational database is a type of database that stores and organizes data in the format of tables with predefined links between them.
+This database would have tables dedicated to storing the transportation occurrences between farms and slaughterhouses, as well as additional tables describing each farm and slaughterhouse and any cases of forced labor.
+This approach allows one to link all direct and indirect connections of forced labor to a slaughterhouse.
+In the second step, an API would be added to the database to facilitate data insertion and extraction.
+Independent microservices, such as self-contained scripts, would be deployed to source new information, update the Lista Suja, and query data to determine if any slaughterhouses are linked to forced labor.
+Each of these microservices - responsible for processing the data, updating the debase, analyzing and summarizing the data - would be automatically deployed at suitable intervals, allowing the pipeline to scale for continuous use.
+This approach ensures consistent data quality assessment and automated data source updates, while also allowing the database to be used for multiple purposes without compromising the workflow's efficiency.
 
 ### Question 2
+
+The majority of cattle indicators can also be used to evaluate the impact of the chicken industry.
+Here, I propose a few extra indicators in addition to the ones already in place.
+To evaluate environmental impacts, regional water quality and soil contamination could be used as indicators of proper waste management.
+Additionally, the effect of agricultural practices on the local region, where large amounts of monoculture lands are used to produce feed for the livestock, could be measured using regional biodiversity indices, in addition to existing indicators such as deforestation.
+Chicken farmers often operate within an integrated agro-industrial framework, with the agro-industry supplying the feedstock and the farmers providing the labor.
+While this system has fostered considerable technological advancements, it has also created a dependency on agro-industries that diminishes the farmers' bargaining leverage and exposes them to lobbying.
+Therefore, considering the social impact of agro-industries in the region, in conjunction with existing indicators such as forced labor, can facilitate a more thorough evaluation of the chicken production chain.
+Lastly, the Carcass condemnation data that is publicly accessible through Serviço de Inspeção Federal (SIF) can be used to evaluate animal welfare and sanitary conditions.
 
 :::
